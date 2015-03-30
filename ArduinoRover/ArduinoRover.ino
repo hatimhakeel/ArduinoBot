@@ -12,15 +12,15 @@ float leftDistance = 0;
 long randomNumber = 0;
 boolean isLastTurnRight = true;
 
-#define RIGHT_TURN_ANGLE 27
-#define LEFT_TURN_ANGLE 27
+#define RIGHT_TURN_ANGLE 23
+#define LEFT_TURN_ANGLE 23
 AF_DCMotor motorR(2, MOTOR12_64KHZ);             // Right motor connected to M2, 64KHz PWM
 AF_DCMotor motorL(1, MOTOR12_64KHZ);             // Left motor connected to M1, 64KHz PWM
-const int TURN_TIME = 500;
+const int TURN_TIME = 200;
 
-#define SERVO_LEFT_POSITION 48
-#define SERVO_CENTER_POSITION 75
-#define SERVO_RIGHT_POSITION 102
+#define SERVO_LEFT_POSITION 44
+#define SERVO_CENTER_POSITION 67
+#define SERVO_RIGHT_POSITION 90
 Servo frontServo;
 
 void setup() {
@@ -29,14 +29,19 @@ void setup() {
   frontServo.write(SERVO_CENTER_POSITION); 
 }
 
-void loop() {    
+void loop() {
+  //turnRight();
+  //delay(5000);
   motionPattern_1();
 }
 
 void motionPattern_1() {  
   centerDistance = getDistance(frontSonar);
   Serial.println(centerDistance);
-  if (centerDistance <= 20 && centerDistance > 0) {
+  if (centerDistance < 5 && centerDistance > 0) {
+    moveBackward(180, 200);    
+  }
+  if (centerDistance <= 25 && centerDistance > 0) {
     stopMovement(1000);
     frontServo.write(SERVO_RIGHT_POSITION);    
     rightDistance = getDistance(frontSonar);
@@ -44,28 +49,28 @@ void motionPattern_1() {
     frontServo.write(SERVO_LEFT_POSITION);
     leftDistance = getDistance(frontSonar);
     delay(1000);
-    Serial.print(leftDistance);
-    Serial.print("  :  ");
-    Serial.println(rightDistance);
+    //Serial.print(leftDistance);
+    //Serial.print("  :  ");
+    //Serial.println(rightDistance);
     if (rightDistance > leftDistance) {
-      turnRight(); Serial.println( "turned right.");
+      turnRight(); //Serial.println( "turned right.");
       isLastTurnRight = true;
     }
     else if (rightDistance < leftDistance) {
-      turnLeft(); Serial.println( "turned left."); 
+      turnLeft(); //Serial.println( "turned left."); 
       isLastTurnRight = false;
     }
     else {
 //      randomSeed(analogRead(5));
 //      randomNumber = random(2);
-      if (isLastTurnRight) {turnRight(); Serial.println( "turned random right."); }
-      else {turnLeft(); Serial.println( "turned random left."); }
+      if (isLastTurnRight) {turnRight(); /*Serial.println( "turned random right.");*/ }
+      else {turnLeft(); /*Serial.println( "turned random left.");*/ }
       delay(50); 
     }
     frontServo.write(SERVO_CENTER_POSITION);
     delay(1000);
   } else {
-    moveForward(220);
+    moveForward(200);
   }
 }
 
